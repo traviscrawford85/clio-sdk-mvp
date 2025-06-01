@@ -1,0 +1,59 @@
+extends: spectral:oas
+
+rules:
+  info-contact:
+    description: API should have contact info
+    given: $.info.contact
+    severity: warn
+    then:
+      field: name
+      function: truthy
+
+  operation-description:
+    description: Operations should have descriptions
+    given: $.paths[*][*]
+    severity: warn
+    then:
+      field: description
+      function: truthy
+
+  no-ambiguous-schema:
+    description: Schemas should have a type
+    given: $.components.schemas[*].properties[*]
+    severity: warn
+    then:
+      field: type
+      function: truthy
+
+  ref-validation:
+    description: $ref paths should point to valid files and anchors
+    given: $.paths[*][*].parameters[*].$ref
+    severity: error
+    then:
+      function: pattern
+      functionOptions:
+        match: '^\\./components/.*\\.yaml(#/.*)?$'
+
+  info-title:
+    description: API should have a title
+    given: $.info
+    severity: error
+    then:
+      field: title
+      function: truthy
+
+  info-version:
+    description: API should have a version
+    given: $.info
+    severity: error
+    then:
+      field: version
+      function: truthy
+
+  servers-present:
+    description: API should define at least one server
+    given: $.servers
+    severity: error
+    then:
+      function: truthy
+

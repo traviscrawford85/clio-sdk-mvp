@@ -1,0 +1,42 @@
+{
+    "defaultPrompt": "This project integrates Clio's OpenAPI backend into a structured Python SDK using FastAPI, Clio's OpenAPI client (`clio_client`), and a custom interface-driven architecture (`clio_sdk`). Copilot should support strongly typed, auto-refactorable, and maintainable workflows across unified models, adapter factories, transformers, interfaces, and service implementations.",
+    "exclude": [
+        "clio_client/",
+        "tests/",
+        "**/__pycache__/",
+        "**/*.pyc",
+        "**/*.env",
+        "**/secrets.*"
+    ],
+    "include": [
+        "clio_sdk/",
+        "clio_sdk/interfaces/",
+        "clio_sdk/services/",
+        "clio_sdk/adapter_factory/adapters/",
+        "clio_sdk/adapter_factory/transformers/",
+        "clio_sdk/auth/",
+        "clio_sdk/api",
+        "clio_sdk/templates/",
+        "clio_sdk/database/",
+        "clio_sdk/lifecycle/",
+        "clio_sdk/schemas/"
+
+    ],
+    "languages": {
+        "python": {
+            "version": "3.11",
+            "typeCheckingMode": "basic",
+            "useLibraryCodeForTypes": true
+        }
+    },
+    "features": {
+        "chat": true,
+        "codeCompletion": true,
+        "codeRefactoring": true,
+        "codeNavigation": true,
+        "codeSearch": true,
+        "inlineCodeSuggestions": true
+    },
+    "chat.promptFiles": true
+}
+

@@ -1,0 +1,37 @@
+__pycache__/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+venv
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# JetBrains
+.idea/
+
+/coverage.xml
+/.coverage
+clio/database/*.db
+generated_models/
+clio_api_documentation_client/
+adapter_frags/
+adapters_frags/
+*.db
+E:\FasterCache\accounts@ledyardlaw.com.sqlite3
+/mnt/e/FasterCache/accounts@ledyardlaw.com.sqlite3
+
+sonar-project.properties
+# VS Code
+.vscode/
+

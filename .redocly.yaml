@@ -1,0 +1,19 @@
+apis:
+  main:
+    root: openapi_sdk.yaml
+  test:
+    root: openapi_fsdk_test.yaml
+extends:
+- recommended
+rules:
+  no-ambiguous-paths: error
+  no-enum-type-mismatch: error
+  no-identical-paths: error
+  no-unresolved-refs: error
+  no-unused-components: error
+  operation-2xx-response: error
+  operation-operationId: error
+  operation-singular-tag: error
+  operation-summary: error
+  tag-description: 'off'
+

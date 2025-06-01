@@ -1,0 +1,50 @@
+project_name_override: clio_sdk
+package_name_override: clio_sdk
+package_version_override: 1.0.0
+generate_all_tags: true
+literal_enums: false
+use_schema_description: true
+field_constraints: true
+
+use_path_prefixes_for_title_model_names: false
+class_overrides:
+  CustomFieldValue:
+    class_name: CustomFieldValue
+    module_name: custom_field_value
+  Matter:
+    class_name: ClioMatter
+    module_name: matter
+  Contact:
+    class_name: ClioContact
+    module_name: contact
+  Task:
+    class_name: ClioTask
+    module_name: task
+  Calendar:
+    class_name: ClioCalendar
+    module_name: calendar
+  Webhook:
+    class_name: ClioWebhook
+    module_name: webhook
+  Activity:
+    class_name: ClioActivity
+    module_name: activity
+  Client:
+    class_name: ClioClient
+    module_name: client
+  User:
+    class_name: ClioUser
+    module_name: user
+  Note:
+    class_name: ClioNote
+    module_name: note
+  Report:
+    class_name: ClioReport
+    module_name: report
+
+
+post_hooks:
+  - "ruff check . --fix"
+  - "ruff format ."
+  - "autoflake --in-place --remove-all-unused-imports --recursive ."
+  - "isort ."
