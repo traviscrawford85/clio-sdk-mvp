@@ -100,10 +100,7 @@ clean-tests:
 	rm -rf $(TESTS_DIR)/test_models/*.py
 	rm -rf $(TESTS_DIR)/test_adapters/*.py
 
-# Copilot Support Scripts
-copilot-verify:
-	python scripts/verify_github_token.py
-
+	
 
 adapter_py_files = $(wildcard adapter_factory/adapters/*_adapter.py)
 transformer_py_files = $(wildcard adapter_factory/transformers/*_transformer.py)
