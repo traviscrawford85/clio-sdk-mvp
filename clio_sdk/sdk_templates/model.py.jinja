@@ -1,0 +1,9 @@
+from clio_sdk.unified_models.base import ClioBaseModel
+
+class {{ model.class_name }}(ClioBaseModel):
+    {% for prop in model.required_properties %}
+    {{ prop.name }}: {{ prop.type_hint }}
+    {% endfor %}
+    {% for prop in model.optional_properties %}
+    {{ prop.name }}: Optional[{{ prop.type_hint }}] = None
+    {% endfor %}

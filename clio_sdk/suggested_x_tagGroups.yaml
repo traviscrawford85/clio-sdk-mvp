@@ -1,0 +1,249 @@
+x-tagGroups:
+- name: Activities
+  tags:
+  - Activity
+- name: Activity Descriptions
+  tags:
+  - ActivityDescription
+- name: Activity Rates
+  tags:
+  - ActivityRate
+- name: Allocations
+  tags:
+  - Allocation
+- name: Bank Accounts
+  tags:
+  - BankAccount
+- name: Bank Transactions
+  tags:
+  - BankTransaction
+- name: Bank Transfers
+  tags:
+  - BankTransfer
+- name: Bill Themes
+  tags:
+  - BillTheme
+- name: Billable Clients
+  tags:
+  - BillableClient
+- name: Billable Matters
+  tags:
+  - BillableMatter
+- name: Bills
+  tags:
+  - Bill
+- name: Calendar Entries
+  tags:
+  - CalendarEntry
+- name: Calendar Entry Event Types
+  tags:
+  - CalendarEntryEventType
+- name: Calendars
+  tags:
+  - Calendar
+- name: Clio Payments Links
+  tags:
+  - ClioPaymentsLink
+- name: Clio Payments Payments
+  tags:
+  - ClioPaymentsPayment
+- name: Comments
+  tags:
+  - Comment
+- name: Communications
+  tags:
+  - Communication
+- name: Contacts
+  tags:
+  - Contact
+- name: Conversation Messages
+  tags:
+  - ConversationMessage
+- name: Conversations
+  tags:
+  - Conversation
+- name: Jurisdictions
+  tags:
+  - Jurisdiction
+- name: Jurisdictions To Triggers
+  tags:
+  - JurisdictionsToTrigger
+- name: Matter Dockets
+  tags:
+  - MatterDocket
+- name: Service Types
+  tags:
+  - ServiceType
+- name: Credit Memos
+  tags:
+  - CreditMemo
+- name: Currencies
+  tags:
+  - Currency
+- name: Custom Actions
+  tags:
+  - CustomAction
+- name: Custom Field Sets
+  tags:
+  - CustomFieldSet
+- name: Custom Fields
+  tags:
+  - CustomField
+  - createCustomFieldValue
+- name: Damages
+  tags:
+  - Damage
+- name: Document Archives
+  tags:
+  - DocumentArchive
+- name: Document Automations
+  tags:
+  - DocumentAutomation
+- name: Document Categories
+  tags:
+  - DocumentCategory
+- name: Document Templates
+  tags:
+  - DocumentTemplate
+- name: Documents
+  tags:
+  - Document
+- name: Document Versions
+  tags:
+  - DocumentVersion
+- name: Expense Categories
+  tags:
+  - ExpenseCategory
+  - LaukExpenseCategory
+- name: Folders
+  tags:
+  - Folder
+- name: Grant Funding Sources
+  tags:
+  - GrantFundingSource
+- name: Grants
+  tags:
+  - Grant
+- name: Groups
+  tags:
+  - Group
+- name: Interest Charges
+  tags:
+  - InterestCharge
+- name: Event Metrics
+  tags:
+  - EventMetrics
+- name: My Events
+  tags:
+  - MyEvent
+- name: Civil Certificated Rates
+  tags:
+  - LaukCivilCertificatedRate
+- name: Civil Controlled Rates
+  tags:
+  - LaukCivilControlledRate
+- name: Criminal Controlled Rates
+  tags:
+  - LaukCriminalControlledRate
+- name: Line Items
+  tags:
+  - LineItem
+- name: Log Entries
+  tags:
+  - LogEntry
+- name: Matter Stages
+  tags:
+  - MatterStage
+- name: Matters
+  tags:
+  - Matter
+- name: Clients
+  tags:
+  - Client
+- name: Matter Contacts
+  tags:
+  - MatterContacts
+- name: Related Contacts
+  tags:
+  - RelatedContacts
+- name: Medical Bills
+  tags:
+  - MedicalBill
+- name: Medical Records
+  tags:
+  - MedicalRecord
+- name: Medical Records Details
+  tags:
+  - MedicalRecordsRequest
+- name: Notes
+  tags:
+  - Note
+- name: Outstanding Client Balances
+  tags:
+  - OutstandingClientBalance
+- name: Practice Areas
+  tags:
+  - PracticeArea
+- name: Relationships
+  tags:
+  - Relationship
+- name: Reminders
+  tags:
+  - Reminder
+- name: Report Presets
+  tags:
+  - ReportPreset
+- name: Report Schedules
+  tags:
+  - ReportSchedule
+- name: Reports
+  tags:
+  - Report
+- name: Billing Settings
+  tags:
+  - BillingSetting
+- name: Text Snippets
+  tags:
+  - TextSnippet
+- name: Statutes
+  tags:
+  - computeStatuteOfLimitations
+- name: Calendar Visibilities
+  tags:
+  - CalendarVisibility
+- name: Task Template Lists
+  tags:
+  - TaskTemplateList
+- name: Task Templates
+  tags:
+  - TaskTemplate
+- name: Task Types
+  tags:
+  - TaskType
+- name: Tasks
+  tags:
+  - Task
+- name: Timers
+  tags:
+  - Timer
+- name: Trust Line Items
+  tags:
+  - TrustLineItem
+- name: Trust Requests
+  tags:
+  - TrustRequest
+- name: Users
+  tags:
+  - User
+- name: Utbms Codes
+  tags:
+  - UtbmsCode
+- name: Utbms Sets
+  tags:
+  - UtbmsSet
+- name: Webhooks
+  tags:
+  - Webhook
+- name: Webhookss
+  tags:
+  - handleMatterCreatedWebhook

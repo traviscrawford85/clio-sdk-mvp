@@ -1,0 +1,103 @@
+from collections.abc import Mapping
+from typing import Any, TypeVar
+
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
+
+from ..models.polymorphic_object_base_type import PolymorphicObjectBaseType
+from ..types import UNSET, Unset
+
+T = TypeVar("T", bound="AllocationParent")
+
+
+@_attrs_define
+class AllocationParent:
+    """
+    Attributes:
+        id (Union[Unset, int]): Unique identifier for the *PolymorphicObject*
+        identifier (Union[Unset, str]): A string to identify the *PolymorphicObject*
+        secondary_identifier (Union[Unset, str]): A secondary string to identify the *PolymorphicObject*
+        tertiary_identifier (Union[Unset, str]): A tertiary string to identify the *PolymorphicObject*
+        type_ (Union[Unset, PolymorphicObjectBaseType]): The type of the *PolymorphicObject*
+    """
+
+    id: Unset | int = UNSET
+    identifier: Unset | str = UNSET
+    secondary_identifier: Unset | str = UNSET
+    tertiary_identifier: Unset | str = UNSET
+    type_: Unset | PolymorphicObjectBaseType = UNSET
+    additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        id = self.id
+
+        identifier = self.identifier
+
+        secondary_identifier = self.secondary_identifier
+
+        tertiary_identifier = self.tertiary_identifier
+
+        type_: Unset | str = UNSET
+        if not isinstance(self.type_, Unset):
+            type_ = self.type_.value
+
+        field_dict: dict[str, Any] = {}
+        field_dict.update(self.additional_properties)
+        field_dict.update({})
+        if id is not UNSET:
+            field_dict["id"] = id
+        if identifier is not UNSET:
+            field_dict["identifier"] = identifier
+        if secondary_identifier is not UNSET:
+            field_dict["secondary_identifier"] = secondary_identifier
+        if tertiary_identifier is not UNSET:
+            field_dict["tertiary_identifier"] = tertiary_identifier
+        if type_ is not UNSET:
+            field_dict["type"] = type_
+
+        return field_dict
+
+    @classmethod
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
+        d = dict(src_dict)
+        id = d.pop("id", UNSET)
+
+        identifier = d.pop("identifier", UNSET)
+
+        secondary_identifier = d.pop("secondary_identifier", UNSET)
+
+        tertiary_identifier = d.pop("tertiary_identifier", UNSET)
+
+        _type_ = d.pop("type", UNSET)
+        type_: Unset | PolymorphicObjectBaseType
+        if isinstance(_type_, Unset):
+            type_ = UNSET
+        else:
+            type_ = PolymorphicObjectBaseType(_type_)
+
+        allocation_parent = cls(
+            id=id,
+            identifier=identifier,
+            secondary_identifier=secondary_identifier,
+            tertiary_identifier=tertiary_identifier,
+            type_=type_,
+        )
+
+        allocation_parent.additional_properties = d
+        return allocation_parent
+
+    @property
+    def additional_keys(self) -> list[str]:
+        return list(self.additional_properties.keys())
+
+    def __getitem__(self, key: str) -> Any:
+        return self.additional_properties[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.additional_properties[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self.additional_properties[key]
+
+    def __contains__(self, key: str) -> bool:
+        return key in self.additional_properties

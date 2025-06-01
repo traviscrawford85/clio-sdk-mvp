@@ -1,0 +1,9 @@
+{
+  "class_name": "ClioAPI",
+  "project_name_override": "clio_client",
+  "package_name_override": "clio_client",
+  "package_version": "0.1.0",
+  "field_prefix": "",
+  "field_postfix": "",
+  "literal_enums": true
+}

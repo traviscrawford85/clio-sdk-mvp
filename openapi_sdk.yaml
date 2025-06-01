@@ -2349,7 +2349,7 @@ components:
           time_entries:
             description: Activity
             items:
-              $ref:omponents/schemas/Activity_base'
+              $ref: '#/components/schemas/Activity_base'
             type: array
           user:
             allOf:
