@@ -1,0 +1,30 @@
+name: "Copilot: Codebase Cleanup Task"
+description: "Tasks to refactor and organize the Clio SDK codebase"
+title: "[Copilot] Cleanup Task: <module_name>"
+labels: ["copilot", "refactor", "cleanup"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📌 Objective
+        Standardize and clean up scripts in the Clio SDK repository by identifying and refactoring orphaned or legacy files.
+
+        ## 🧠 Context
+        - Files not referenced in the Makefile
+        - Scripts not importing `resources.py`
+        - Unused adapters/transformers/services
+
+        ## 🎯 Tasks
+        - [ ] Rename legacy files for clarity (e.g., `foo_helper.py` → `foo_adapter.py`)
+        - [ ] Consolidate duplicate logic into `adapter_factory`, `services`, or `unified_models`
+        - [ ] Archive unused or experimental files in `/archive/`
+        - [ ] Add missing references to `Makefile` if still relevant
+        - [ ] Annotate changes with `# copilot: consider`
+
+        ## ⚠️ Constraints
+        - Use `mypy`, `ruff`, and `black` to ensure type and format correctness
+        - Follow naming conventions from `resources.py`
+
+        ---
+        ✅ You may suggest renames, deletions, or new tests if applicable.

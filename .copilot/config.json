@@ -37,6 +37,9 @@
         "codeSearch": true,
         "inlineCodeSuggestions": true
     },
-    "chat.promptFiles": true
+      "active_scripts": [
+    "scripts/verify_github_token.py",
+    "scripts/refactor_outdated_services.py"
+  ],
+  "chat.promptFiles": true
 }
-

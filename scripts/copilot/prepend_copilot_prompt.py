@@ -1,3 +1,6 @@
+# copilot-enabled: true
+# purpose: Used by GitHub Copilot for code refactoring, generation, or maintenance
+
 import os
 
 OPENAPI_ROOT = "./openapi"
