@@ -32,33 +32,45 @@ def find_orphans():
             orphans.append(file)
     return orphans
 
-def find_duplicates():
-    seen = {}
-    duplicates = []
-    for file in SCRIPTS_DIR.glob("*.py"):
-        try:
-            tree = ast.parse(file.read_text())
-            structure = ast.dump(tree, annotate_fields=False)
-            digest = hashlib.sha256(structure.encode()).hexdigest()
-            if digest in seen:
-                duplicates.append((seen[digest], file))
-            else:
-                seen[digest] = file
-        except Exception as e:
-            print(f"❌ Failed to parse {file}: {e}")
-    return duplicates
+--- a/scripts/audit_scripts.py
++++ b/scripts/audit_scripts.py
+@@ def find_duplicates() -> List[Tuple[Path, Path]]:
+     return duplicates
+ 
++def create_github_issue(title: str, body: str):
++    """Create a GitHub issue using the GitHub CLI."""
++    try:
++        subprocess.run([
++            "gh", "issue", "create",
++            "--title", title,
++            "--body", body
++        ], check=True)
++    except subprocess.CalledProcessError as e:
++        print(f"⚠️ Failed to create GitHub issue: {e}")
++
+ def main():
+     orphans = find_orphans()
+     duplicates = find_duplicates()
 
-def main():
-    orphans = find_orphans()
-    duplicates = find_duplicates()
+     print("\n🧹 Unused Scripts:")
+     for orphan in orphans:
+         rel_path = orphan.relative_to(ROOT)
+         print(f" - {rel_path}")
++        create_github_issue(
++            title=f"Cleanup: Unused script `{rel_path}`",
++            body=f"The script `{rel_path}` appears to be unused. Consider archiving or removing it."
++        )
 
-    print("\n🧹 Unused Scripts:")
-    for orphan in orphans:
-        print(f" - {orphan.relative_to(ROOT)}")
+     print("\n🧪 Duplicate Scripts:")
+     for a, b in duplicates:
+         rel_a = a.relative_to(ROOT)
+         rel_b = b.relative_to(ROOT)
+         print(f" - {rel_a} ⭢ {rel_b}")
++        create_github_issue(
++            title=f"Refactor: Duplicate script detected `{rel_b}`",
++            body=f"The script `{rel_b}` is structurally identical to `{rel_a}`. Consider consolidating them."
++        )
 
-    print("\n🧪 Duplicate Scripts:")
-    for a, b in duplicates:
-        print(f" - {a.relative_to(ROOT)} ⭢ {b.relative_to(ROOT)}")
 
 if __name__ == "__main__":
     main()
