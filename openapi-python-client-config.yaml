@@ -1,12 +1,14 @@
-project_name_override: clio_client
-package_name_override: clio_client
+project_name_override: clio_async_client
+package_name_override: clio_async_client
 package_version_override: 1.0.0
 generate_all_tags: true
 literal_enums: false
 use_schema_description: true
 field_constraints: true
+use_async: true
 
 use_path_prefixes_for_title_model_names: false
+
 class_overrides:
   CustomFieldValue:
     class_name: CustomFieldValue
@@ -42,9 +44,9 @@ class_overrides:
     class_name: ClioReport
     module_name: report
 
-
 post_hooks:
   - "ruff check . --fix"
   - "ruff format ."
   - "autoflake --in-place --remove-all-unused-imports --recursive ."
   - "isort ."
+custom_template_path: clio-sdk-mvp/templates

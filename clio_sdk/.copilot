@@ -1,0 +1,16 @@
+This project is a unified async Python SDK for Clio’s API. Follow these instructions when assisting with code:
+
+-   All services, interfaces, and API calls should be fully async using `async def` and `await`
+-   Always include type hints using Python 3.10+ typing (e.g., `-> ClioMatter | None`)
+-   Use Pydantic models (`model_validate`, `model_dump`) for conversions
+-   DO NOT edit the `clio_sdk/clio_client/` directory — it is auto-generated via OpenAPI
+-   Interfaces are placed in `interfaces/` and must be prefixed with `I`, e.g., `IMatterService`
+-   Adapters in `adapter_factory/` transform client models into unified models
+-   Commands/queries represent use-case logic and consume services
+-   Place all async tests in `tests/`, using `pytest-asyncio`
+
+Client generation is done via:
+
+```bash
+bash scripts/update_openapi.sh
+```
