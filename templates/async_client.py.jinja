@@ -1,0 +1,207 @@
+import httpx
+from typing import Any, Dict, Optional, Union, Type, TypeVar, List, cast
+from pydantic import BaseModel
+from contextlib import asynccontextmanager
+
+T = TypeVar("T", bound=BaseModel)
+
+class ClioApiError(Exception):
+    def __init__(self, status: int, message: str, response: Optional[httpx.Response] = None):
+        self.status = status
+        self.message = message
+        self.response = response
+        super().__init__(f"[{status}] {message}")
+
+class AsyncApiClient:
+    """
+    Type-safe async API client for Clio with pagination and pydantic deserialization.
+    """
+
+    def __init__(
+        self,
+        base_url: str,
+        token: str,
+        *,
+        timeout: Union[float, httpx.Timeout] = 30.0,
+        headers: Optional[Dict[str, str]] = None,
+        httpx_args: Optional[Dict[str, Any]] = None,
+    ):
+        self.base_url = base_url.rstrip("/")
+        self.token = token
+        self.timeout = httpx.Timeout(timeout) if isinstance(timeout, (int, float)) else timeout
+        self._headers = headers or {}
+        self._headers["Authorization"] = f"Bearer {token}"
+        self._headers.setdefault("Accept", "application/json")
+        self._httpx_args = httpx_args or {}
+        self._client: Optional[httpx.AsyncClient] = None
+
+    async def __aenter__(self) -> "AsyncApiClient":
+        await self.open()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
+
+    async def open(self):
+        if self._client is None:
+            self._client = httpx.AsyncClient(
+                base_url=self.base_url,
+                headers=self._headers,
+                timeout=self.timeout,
+                **self._httpx_args,
+            )
+
+    async def close(self):
+        if self._client:
+            await self._client.aclose()
+            self._client = None
+
+    @property
+    def client(self) -> httpx.AsyncClient:
+        if not self._client:
+            raise RuntimeError("Client not initialized. Use `async with` or call `open()`.")
+        return self._client
+
+    async def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json: Optional[Any] = None,
+        data: Optional[Any] = None,
+        files: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> httpx.Response:
+        merged_headers = dict(self._headers)
+        if headers:
+            merged_headers.update(headers)
+
+        try:
+            resp = await self.client.request(
+                method=method,
+                url=path,
+                params=params,
+                json=json,
+                data=data,
+                files=files,
+                headers=merged_headers,
+                **kwargs,
+            )
+            resp.raise_for_status()
+            return resp
+        except httpx.HTTPStatusError as e:
+            raise ClioApiError(e.response.status_code, e.response.text, response=e.response) from e
+
+    async def request_json(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json: Optional[Any] = None,
+        data: Optional[Any] = None,
+        files: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        response = await self.request(
+            method,
+            path,
+            params=params,
+            json=json,
+            data=data,
+            files=files,
+            headers=headers,
+            **kwargs,
+        )
+        payload = response.json()
+        if response_model:
+            return response_model.parse_obj(payload)
+        return payload
+
+    async def get(
+        self,
+        path: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        return await self.request_json("GET", path, params=params, headers=headers, response_model=response_model, **kwargs)
+
+    async def post(
+        self,
+        path: str,
+        *,
+        json: Optional[Any] = None,
+        data: Optional[Any] = None,
+        files: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        return await self.request_json("POST", path, json=json, data=data, files=files, headers=headers, response_model=response_model, **kwargs)
+
+    async def patch(
+        self,
+        path: str,
+        *,
+        json: Optional[Any] = None,
+        data: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        return await self.request_json("PATCH", path, json=json, data=data, headers=headers, response_model=response_model, **kwargs)
+
+    async def put(
+        self,
+        path: str,
+        *,
+        json: Optional[Any] = None,
+        data: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        return await self.request_json("PUT", path, json=json, data=data, headers=headers, response_model=response_model, **kwargs)
+
+    async def delete(
+        self,
+        path: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> Union[T, Dict[str, Any]]:
+        return await self.request_json("DELETE", path, params=params, headers=headers, response_model=response_model, **kwargs)
+
+    async def paginate(
+        self,
+        path: str,
+        *,
+        page_param: str = "page",
+        per_page_param: str = "per_page",
+        per_page: int = 200,
+        response_model: Optional[Type[T]] = None,
+        **kwargs,
+    ) -> List[Union[T, Dict[str, Any]]]:
+        page = 1
+        all_items = []
+        while True:
+            params = kwargs.pop("params", {})
+            params.update({page_param: page, per_page_param: per_page})
+            result = await self.get(path, params=params, response_model=None, **kwargs)
+            items = result.get("data", [])
+            if response_model:
+                items = [response_model.parse_obj(i) for i in items]
+            all_items.extend(items)
+            if not result.get("next_page"):
+                break
+            page += 1
+        return all_items

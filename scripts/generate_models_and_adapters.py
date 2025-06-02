@@ -1,13 +1,34 @@
+from pathlib import Path
+from typing import Dict, Any
 import os
-
-import inflection
 import yaml
+import inflection
+from jinja2 import Environment, FileSystemLoader
 
-from clio_sdk.resources import RESOURCES
+# Setup paths and environment
+BASE_DIR = Path(".")
+TEMPLATE_DIR = BASE_DIR / "sdk_templates"
+MODEL_DIR = BASE_DIR / "clio_sdk/unified_models"
+ADAPTER_DIR = BASE_DIR / "clio_sdk/unified_adapters"
+INPUT_FILE = BASE_DIR / "openapi_sdk.yaml"
 
-INPUT_FILE = "openapi_sdk.yaml"
-MODEL_DIR = "clio_sdk/unified_models"
-os.makedirs(MODEL_DIR, exist_ok=True)
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+ADAPTER_DIR.mkdir(parents=True, exist_ok=True)
+
+env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)))
+
+# Jinja2 templates
+model_template = env.get_template("model_template.j2")
+adapter_template = env.get_template("adapter_template.j2")
+
+# Type resolution
+TYPE_MAPPING = {
+    "string": "str",
+    "integer": "int",
+    "number": "float",
+    "boolean": "bool",
+    "object": "dict",
+}
 
 
 def pascal_case(name: str) -> str:
@@ -18,104 +39,69 @@ def snake_case(name: str) -> str:
     return inflection.underscore(name)
 
 
-def normalize_resource_name(name: str) -> str:
-    for r in RESOURCES:
-        if name.lower().startswith(r):
-            return r
-    return ""
-
-
-def resolve_ref_schema(ref: str, schemas: dict) -> dict:
+def resolve_ref_schema(ref: str, schemas: Dict[str, Any]) -> Dict[str, Any]:
     ref_name = ref.split("/")[-1]
     return schemas.get(ref_name, {})
 
 
-def infer_type(prop: dict) -> str:
+def infer_type(prop: Dict[str, Any]) -> str:
     if "$ref" in prop:
         ref_name = prop["$ref"].split("/")[-1]
         return pascal_case(ref_name)
     t = prop.get("type", "Any")
     if t == "array":
         return f"List[{infer_type(prop.get('items', {}))}]"
-    return {
-        "string": "str",
-        "integer": "int",
-        "number": "float",
-        "boolean": "bool",
-        "object": "dict",
-    }.get(t, "Any")
+    return TYPE_MAPPING.get(t, "Any")
 
 
-# Load OpenAPI spec
-with open(INPUT_FILE, "r", encoding="utf-8") as f:
-    spec = yaml.safe_load(f)
-schemas = spec.get("components", {}).get("schemas", {})
+def generate_model_and_adapter(resource: str, schemas: Dict[str, Any]) -> None:
+    pascal = pascal_case(resource)
+    snake = snake_case(resource)
+    schema = schemas.get(pascal) or schemas.get(resource)
+    if not schema:
+        print(f"❌ Schema for '{resource}' not found.")
+        return
+    if "$ref" in schema:
+        schema = resolve_ref_schema(schema["$ref"], schemas)
 
-# Group schemas by resource
-grouped = {}
-for name, schema in schemas.items():
-    resource = normalize_resource_name(name)
-    if resource:
-        grouped.setdefault(resource, []).append((name, schema))
+    properties = schema.get("properties", {})
+    required = set(schema.get("required", []))
+    fields = [
+        {
+            "name": name,
+            "type": infer_type(prop),
+            "required": name in required,
+        }
+        for name, prop in properties.items()
+    ]
 
-# Generate unified models
-for resource, items in grouped.items():
-    merged_fields = {}
-    referenced_models = set()
-    internal_class = pascal_case(resource)
-    unified_model_class = f"Unified{internal_class}"
+    model_code = model_template.render(class_name=pascal, fields=fields)
+    (MODEL_DIR / f"{snake}.py").write_text(model_code)
 
-    for name, schema in items:
-        if "$ref" in schema:
-            schema = resolve_ref_schema(schema["$ref"], schemas)
-        props = schema.get("properties", {})
-        required = set(schema.get("required", []))
-        fields = {}
-        for k, v in props.items():
-            ftype = infer_type(v)
-            # Track referenced models for import
-            if (
-                ftype not in {"str", "int", "float", "bool", "dict", "Any"}
-                and not ftype.startswith("List[")
-            ):
-                referenced_models.add(ftype)
-            elif ftype.startswith("List["):
-                # Extract the inner type for List[...] and check if it's a model
-                inner_type = ftype[5:-1]
-                if inner_type not in {"str", "int", "float", "bool", "dict", "Any"}:
-                    referenced_models.add(inner_type)
-            fields[k] = (ftype, k in required)
-        for k, (ftype, required) in fields.items():
-            if k not in merged_fields:
-                merged_fields[k] = (ftype, required)
-            else:
-                old_type, old_req = merged_fields[k]
-                if old_type != ftype:
-                    merged_fields[k] = ("str", old_req or required)
-                else:
-                    merged_fields[k] = (old_type, old_req or required)
+    adapter_code = adapter_template.render(class_name=pascal, module_name=snake)
+    (ADAPTER_DIR / f"adapter_{snake}.py").write_text(adapter_code)
 
-    model_path = os.path.join(MODEL_DIR, f"unified_{resource}.py")
-    with open(model_path, "w") as f:
-        f.write("from pydantic import BaseModel\n")
-        f.write("from typing import Optional, Any, List\n")
-        f.write("from datetime import datetime, date\n")
-        # Import referenced models
-        for ref in sorted(referenced_models):
-            f.write(f"from .unified_{ref.lower()} import Unified{ref}\n")
-        f.write("\n")
-        f.write(f"class {unified_model_class}(BaseModel):\n")
-        if not merged_fields:
-            f.write("    pass\n")
-        else:
-            for fname, (ftype, required) in merged_fields.items():
-                line = (
-                    f"    {fname}: {ftype}"
-                    if required
-                    else f"    {fname}: Optional[{ftype}] = None"
-                )
-                f.write(line + "\n")
+    append_to_init(resource)
+    print(f"✅ Generated model and adapter for '{resource}'")
 
-print(
-    "✅ Cleaned script generated models, adapters, and transformers without adapter fragments."
-)
+
+def append_to_init(resource: str):
+    init_path = MODEL_DIR / "__init__.py"
+    class_name = pascal_case(resource)
+    import_line = f"from .{snake_case(resource)} import {class_name}\n"
+
+    if init_path.exists():
+        lines = init_path.read_text().splitlines(keepends=True)
+        if import_line in lines:
+            return
+
+    with open(init_path, "a") as f:
+        f.write(import_line)
+
+
+# Save script to file system for user reference
+script_path = "/mnt/data/refactored_generate_single_model.py"
+with open(script_path, "w") as f:
+    f.write(Path(__file__).read_text())
+
+script_path

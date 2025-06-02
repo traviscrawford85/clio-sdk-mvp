@@ -1,16 +1,42 @@
 # copilot-enabled: true
-# Description: This file is part of the Clio SDK, which standardizes adapters, services, and transformers for interacting with the Clio API using unified Pydantic models.
-# Objective: Refactor and maintain this module to follow current SDK standards.
-# This is the jinja2 template from which the openapi-python-client generator references for model and classes. 
+# Description: Unified service adapter implementation for Clio SDK using async client.
+# Objective: Expose CRUD logic using ClioClient and standardized Pydantic models via registered adapters.
 # Constraints:
-# - Use interfaces from `clio_sdk.interfaces`.
-# - Use adapters from `clio_sdk.adapter_factory` via `get_adapter()`.
-# - Ensure services return unified models from `clio_sdk.unified_models`.
-# - Match method signatures to their declared interfaces.
-# - Maintain type safety with `mypy`.
-# - Format with `black`, import-sort with `isort`, and validate with `flake8`.
-# Tasks:
-# 1. Refactor outdated service/adapters/transformers to match latest structure.
-# 2. Fill in missing logic based on Clio OpenAPI client responses or SDK models.
-# 3. Write new test stubs under `tests/` for any new methods.
-# 4. Annotate any assumptions or TODOs inline with `# copilot: consider`.
+# - Uses async/await.
+# - Respects contracts from interfaces.
+# - Returns only unified Pydantic models.
+# - Type-safe and mypy/flake8-compatible.
+
+from typing import Callable, Dict, Optional, List
+from clio_sdk.interfaces.i_{{ resource }}_service import I{{ class_name }}Service
+from clio_sdk.unified_models.{{ resource }} import {{ class_name }}, {{ class_name }}UpdateInputModel
+from clio_sdk.unified_adapters import get_adapter
+from clio_sdk.queries.{{ resource }} import get_{{ resource }}_by_id, list_{{ resource }}s, build_full_update_request
+from clio_sdk.client import ClioClient
+
+class {{ class_name }}Service(I{{ class_name }}Service):
+    """
+    Async service for interacting with Clio {{ class_name }} resources.
+    Wraps the ClioClient and applies transformations via adapters.
+    """
+
+    def __init__(self, client: ClioClient):
+        self.client = client
+            self.adapter: Dict[str, Callable[..., {{ class_name }}]] = get_adapter("{{ module_name }}")
+
+    async def get_{{ module_name }}(self, {{ module_name }}_id: int) -> Optional[{{ class_name }}]:
+        raw = await get_{{ module_name }}_by_id(self.client, {{ module_name }}_id)
+        return self.adapter["from_clio"](raw) if raw else None  # type: ignore
+
+    async def list_{{ module_name }}s(self) -> List[{{ class_name }}]:
+        raw_list = await list_{{ module_name }}s(self.client)
+        return [self.adapter["from_clio"](item) for item in raw_list]  # type: ignore
+
+    async def update_{{ module_name }}(
+        self, {{ module_name }}_id: int, update: {{ class_name }}UpdateInputModel
+    ) -> bool:
+        payload = build_full_update_request(update)
+        response = await self.client.patch(f"/{{ module_name }}s/{{ '{{' }}{{ module_name }}_id{{ '}}' }}", json=payload.model_dump())
+        return response.status_code == 200
+
+    # copilot: consider adding create_{{ resource }} or delete_{{ resource }} if OpenAPI spec supports it
