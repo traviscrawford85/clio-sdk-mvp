@@ -1,0 +1,6 @@
+{% if app_imported %}
+from slack_bolt import App
+{{ symbol }} = App()  # Auto-added because App was detected
+{% else %}
+{{ symbol }} = None  # Fallback for missing import
+{% endif %}

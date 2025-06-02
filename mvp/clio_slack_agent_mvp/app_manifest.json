@@ -1,0 +1,55 @@
+{
+    "display_information": {
+        "name": "Clio Assistant"
+    },
+    "features": {
+        "app_home": {
+            "home_tab_enabled": false,
+            "messages_tab_enabled": true,
+            "messages_tab_read_only_enabled": false
+        },
+        "bot_user": {
+            "display_name": "Clio Assistant",
+            "always_online": false
+        },
+        "assistant_view": {
+            "assistant_description": "A helpful assistant",
+            "suggested_prompts": []
+        }
+    },
+    "oauth_config": {
+        "scopes": {
+            "user": [
+                "chat:write",
+                "channels:read",
+                "groups:read"
+            ],
+            "bot": [
+                "app_mentions:read",
+                "assistant:write",
+                "channels:history",
+                "groups:history",
+                "im:history",
+                "mpim:history",
+                "chat:write"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "bot_events": [
+                "app_mention",
+                "message.channels",
+                "message.groups",
+                "message.im",
+                "message.mpim"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": true,
+        "token_rotation_enabled": false
+    }
+}

@@ -1,0 +1,76 @@
+"""
+Calendars Interface
+"""
+from typing import Any, Protocol
+
+class ICalendarsService(Protocol):
+    
+    def calendar_index(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendar_create(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendar_destroy(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendar_show(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendar_update(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentry_index(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentry_create(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentry_destroy(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentry_show(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentry_update(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentryeventtype_index(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentryeventtype_create(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentryeventtype_destroy(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentryeventtype_show(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarentryeventtype_update(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarvisibility_index(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarvisibility_show(self, self, **kwargs) -> Any:
+        ...
+    
+    def calendarvisibility_update(self, self, **kwargs) -> Any:
+        ...
+    
+    def reminder_index(self, self, **kwargs) -> Any:
+        ...
+    
+    def reminder_create(self, self, **kwargs) -> Any:
+        ...
+    
+    def reminder_destroy(self, self, **kwargs) -> Any:
+        ...
+    
+    def reminder_show(self, self, **kwargs) -> Any:
+        ...
+    
+    def reminder_update(self, self, **kwargs) -> Any:
+        ...
+    
