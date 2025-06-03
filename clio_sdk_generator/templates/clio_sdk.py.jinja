@@ -1,0 +1,21 @@
+
+import importlib
+import httpx
+from .retry_transport import RetryTransport
+
+class ClioSDK:
+    def __init__(self, base_url: str, token: str = "", retries: int = 3, backoff: float = 0.5, **kwargs):
+        transport = RetryTransport(httpx.AsyncHTTPTransport(), retries=retries, backoff=backoff)
+        self.client = httpx.AsyncClient(
+            base_url=base_url,
+            headers={"Authorization": f"Bearer {token}"},
+            transport=transport,
+            **kwargs
+        )
+
+        {% for tag in tags %}
+        mod_name = f"{{ tag.lower().replace(' ', '_') }}_api"
+        mod = importlib.import_module(mod_name)
+        api_class = getattr(mod, f"{{ tag.title().replace(' ', '') }}Api")
+        setattr(self, "{{ tag.lower().replace(' ', '_') }}", api_class(self.client))
+        {% endfor %}

@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: Webhooks API
+  version: "1.0"
+paths:
+  /webhooks:
+    get:
+      tags: [Webhooks]
+      operationId: listWebhooks
+      summary: List all webhook subscriptions
+      responses:
+        "200":
+          description: A list of webhooks
+    post:
+      tags: [Webhooks]
+      operationId: createWebhook
+      summary: Register a new webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Webhook"
+      responses:
+        "201":
+          description: Webhook created
+  /webhooks/{id}:
+    delete:
+      tags: [Webhooks]
+      operationId: deleteWebhook
+      summary: Unsubscribe from a webhook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+components:
+  schemas:
+    Webhook:
+      type: object
+      properties:
+        url:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        secret:
+          type: string

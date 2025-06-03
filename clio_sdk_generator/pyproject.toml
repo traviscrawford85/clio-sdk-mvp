@@ -1,0 +1,21 @@
+[project]
+name = "clio_sdk"
+version = "0.1.0"
+description = "Clio SDK - auto-generated from OpenAPI"
+authors = [{ name = "Clio", email = "dev@clio.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "httpx[http2]",
+    "pydantic>=1.10,<3.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio"
+]

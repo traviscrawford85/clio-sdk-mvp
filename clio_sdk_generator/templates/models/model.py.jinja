@@ -1,0 +1,10 @@
+
+from pydantic import BaseModel
+from typing import Optional
+
+{% for name, fields in schemas.items() %}
+class {{ name }}(BaseModel):
+    {% for field, ftype in fields.items() %}
+    {{ field }}: Optional[{{ ftype }}]
+    {% endfor %}
+{% endfor %}

@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: Custom Actions API
+  version: "1.0"
+paths:
+  /matters/{id}/duplicate:
+    post:
+      tags: [CustomActions]
+      operationId: duplicateMatter
+      summary: Duplicate a matter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Duplicated
+      x-action: true
+  /contacts/{id}/send_welcome_email:
+    post:
+      tags: [CustomActions]
+      operationId: sendWelcomeEmail
+      summary: Send welcome email to contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Email sent
+      x-action: true

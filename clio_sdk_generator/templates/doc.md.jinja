@@ -1,0 +1,13 @@
+
+# {{ tag }} API
+
+{% for op in operations %}
+## {{ op.operation_id }}
+
+**Method:** `{{ op.method }}`  
+**Path:** `{{ op.path }}`
+
+{{ op.summary }}
+
+---
+{% endfor %}

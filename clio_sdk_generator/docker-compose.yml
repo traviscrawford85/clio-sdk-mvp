@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  clio-sdk-app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - clio_sdk_data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+volumes:
+  clio_sdk_data:

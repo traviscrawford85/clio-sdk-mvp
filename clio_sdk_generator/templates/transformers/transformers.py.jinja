@@ -1,0 +1,12 @@
+
+"""Auto-generated transformers for {{ tag }}."""
+
+{% for model in models %}
+def to_{{ model.name | snakecase }}(dto: {{ model.name }}) -> {{ model.name }}:
+    """Transforms OpenAPI {{ model.name }} DTO to Clio-native model."""
+    return {{ model.name }}(
+        {% for field in model.fields %}
+        {{ field.name }}=dto.{{ field.name }},
+        {% endfor %}
+    )
+{% endfor %}
