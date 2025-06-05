@@ -1,7 +1,7 @@
 # adapter_factory/base.py
 from typing import Callable, Dict, Type
 
-from adapter_factory.transformer import get_transformer
+from .transformer import get_transformer
 from pydantic import BaseModel
 from clio_sdk.adapter_factory.i_adapter_factory import IAdapterFactory
 
